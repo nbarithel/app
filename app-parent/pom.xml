@@ -14,13 +14,17 @@
   <name>Application - Parent</name>
 
   <properties>
-    <app-parent.maven-checkstyle-plugin.version>3.0.0</app-parent.maven-checkstyle-plugin.version>
-    <app-parent.checkstyle.version>8.18</app-parent.checkstyle.version>
-    <app-parent.maven-pmd-plugin.version>3.11.0</app-parent.maven-pmd-plugin.version>
-    <app-parent.pmd.version>6.12.0</app-parent.pmd.version>
+    <app-parent.maven-checkstyle-plugin.version>3.1.0</app-parent.maven-checkstyle-plugin.version>
+    <app-parent.checkstyle.version>8.29</app-parent.checkstyle.version>
+    <app-parent.maven-pmd-plugin.version>3.13.0</app-parent.maven-pmd-plugin.version>
+    <app-parent.pmd.version>6.21.0</app-parent.pmd.version>
+    <app-parent.spotbugs-maven-plugin.version>3.1.12.2</app-parent.spotbugs-maven-plugin.version>
 
-    <app-parent.junit.version>5.4.0</app-parent.junit.version>
-    <app-parent.maven-surefire-plugin.version>2.22.1</app-parent.maven-surefire-plugin.version>
+    <app-parent.junit.version>5.6.0</app-parent.junit.version>
+    <app-parent.mockito.version>3.2.4</app-parent.mockito.version>
+    <app-parent.assertj.version>3.15.0</app-parent.assertj.version>
+    <app-parent.maven-surefire-plugin.version>2.22.2</app-parent.maven-surefire-plugin.version>
+    <app-parent.jacoco-maven-plugin.version>0.8.5</app-parent.jacoco-maven-plugin.version>
   </properties>
 
   <dependencyManagement>
@@ -30,6 +34,24 @@
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter</artifactId>
         <version>${app-parent.junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${app-parent.mockito.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.mockito</groupId>
+         <artifactId>mockito-junit-jupiter</artifactId>
+         <version>${app-parent.mockito.version}</version>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${app-parent.assertj.version}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -90,6 +112,7 @@
           </rulesets>
           <includeTests>true</includeTests>
           <printFailingErrors>true</printFailingErrors>
+          <linkXRef>false</linkXRef>
         </configuration>
         <executions>
           <execution>
@@ -117,6 +140,52 @@
             <version>${app-parent.pmd.version}</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>${app-parent.spotbugs-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>check</id>
+            <phase>test</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <includeTests>true</includeTests>
+          <maxRank>20</maxRank> <!-- 1-4 scariest, 5-9 scary, 10-14 troubling, and 15-20 concern bugs -->
+          <excludeFilterFile>app/spotbugs-exclude.xml</excludeFilterFile>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>com.github.nbarithel.app</groupId>
+            <artifactId>app-quality</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${app-parent.jacoco-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>prepare</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
